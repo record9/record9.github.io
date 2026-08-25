@@ -1,0 +1,7 @@
+# Nom du site — modifiez librement cette ligne
+title: Frédéric — Photographies
+description: Galerie photo argentique
+
+# Ne pas toucher en dessous de cette ligne
+exclude:
+  - README.md

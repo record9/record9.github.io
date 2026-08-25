@@ -1,0 +1,47 @@
+---
+layout: default
+title: Albums
+---
+{% assign exts = ".jpg .jpeg .png .webp .JPG .JPEG .PNG .WEBP" %}
+{% assign photos = site.static_files | where_exp: "f", "f.path contains '/photos/'" %}
+{% assign photos = photos | where_exp: "f", "exts contains f.extname" %}
+{% assign albums = photos | group_by_exp: "f", "f.path | remove_first: '/photos/' | split: '/' | first" | sort: "name" %}
+
+{% if albums.size == 0 %}
+<p class="empty">Aucun album pour l’instant. Créez un sous-dossier dans <code>photos/</code> et déposez-y vos images.</p>
+{% endif %}
+
+{% if albums.size > 1 %}
+<nav class="album-index">
+  {% for album in albums %}
+    <a href="#{{ album.name | slugify }}">{{ album.name | replace: "-", " " }}</a>
+  {% endfor %}
+</nav>
+{% endif %}
+
+{% for album in albums %}
+<section class="album" id="{{ album.name | slugify }}">
+  <h2 class="album-header">
+    <span class="album-name">{{ album.name }}</span>
+    <span class="album-count">{{ album.items.size }} vue{% if album.items.size > 1 %}s{% endif %}</span>
+  </h2>
+  <div class="album-grid">
+    {% assign items = album.items | sort: "name" %}
+    {% for f in items %}
+      {% assign first = f.basename | slice: 0, 1 %}
+      {% if "0123456789" contains first %}
+        {% assign titre = f.basename | slice: 11, 120 | replace: "-", " " %}
+      {% else %}
+        {% assign titre = f.basename | replace: "-", " " %}
+      {% endif %}
+      <figure class="photo">
+        <img src="{{ f.path | relative_url }}" alt="{{ titre }}" loading="lazy">
+        <figcaption>
+          <span class="frame">{% if forloop.index < 10 %}0{% endif %}{{ forloop.index }}A</span>
+          <span class="caption-title">{{ titre }}</span>
+        </figcaption>
+      </figure>
+    {% endfor %}
+  </div>
+</section>
+{% endfor %}
