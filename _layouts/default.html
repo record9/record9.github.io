@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ page.title }} — {{ site.title }}</title>
+  <meta name="description" content="{{ site.description }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ '/assets/style.css' | relative_url }}">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-title" href="{{ '/' | relative_url }}">{{ site.title }}</a>
+    <nav class="site-nav">
+      <a href="{{ '/' | relative_url }}" {% if page.url == "/" %}aria-current="page"{% endif %}>Flux</a>
+      <a href="{{ '/albums.html' | relative_url }}" {% if page.url == "/albums.html" %}aria-current="page"{% endif %}>Albums</a>
+    </nav>
+  </header>
+
+  <main>
+    {{ content }}
+  </main>
+
+  <footer class="site-footer">
+    <span>{{ site.title }}</span>
+  </footer>
+
+  <div class="lightbox" id="lightbox" hidden>
+    <img alt="">
+    <p class="lightbox-caption"></p>
+  </div>
+
+  <script>
+    (function () {
+      var lb = document.getElementById('lightbox');
+      var lbImg = lb.querySelector('img');
+      var lbCap = lb.querySelector('.lightbox-caption');
+
+      document.querySelectorAll('.photo').forEach(function (fig) {
+        var img = fig.querySelector('img');
+        img.tabIndex = 0;
+        function open() {
+          lbImg.src = img.src;
+          lbImg.alt = img.alt;
+          lbCap.textContent = img.alt;
+          lb.hidden = false;
+          document.body.classList.add('no-scroll');
+        }
+        img.addEventListener('click', open);
+        img.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
+        });
+      });
+
+      function close() {
+        lb.hidden = true;
+        lbImg.src = '';
+        document.body.classList.remove('no-scroll');
+      }
+      lb.addEventListener('click', close);
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !lb.hidden) close();
+      });
+    })();
+  </script>
+</body>
+</html>
